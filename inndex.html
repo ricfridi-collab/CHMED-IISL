@@ -402,11 +402,10 @@
 
     <script>
         // ==========================================
-        // 1. منطق الحماية والتفعيل (مع API)
+        // 1. منطق الحماية والتفعيل (تم تحديث الرابط والمنطق)
         // ==========================================
         
-        // رابط الـ API (SheetDB)
-        // يجب استبدال هذا الرابط برابطك الخاص من sheetdb.io
+        // الرابط الجديد المحدد
         const API_BASE_URL = 'https://sheetdb.io/api/v1/coepewa2mafyv'; 
 
         function clearActivation() {
@@ -418,7 +417,7 @@
             }
         }
 
-        // توليد معرف فريد للجهاز (Fingerprint) لمنع مشاركة الكود
+        // توليد معرف فريد للجهاز (بصمة الجهاز)
         function getDeviceFingerprint() {
             let fp = localStorage.getItem('device_fp');
             if (!fp) {
@@ -437,7 +436,7 @@
             }
         };
 
-        // دالة التحقق من الكود (المنطق الرئيسي)
+        // دالة التحقق من الكود (المنطق الكامل)
         async function verifyCode() {
             const input = document.getElementById('access-code').value.trim();
             const btn = document.getElementById('btn-unlock');
@@ -479,7 +478,7 @@
                     msg.textContent = "مرحباً بعودتك";
                     activateUser();
                 } else {
-                    // الكود جديد وصالح -> قم بتفعيله
+                    // الكود جديد وصالح -> قم بتفعيله وكتابة البيانات على الشيت
                     await activateCodeInSheet(input);
                 }
 
@@ -492,9 +491,11 @@
             }
         }
 
-        // دالة تحديث الشيت بحالة الاستخدام
+        // دالة تحديث الشيت بحالة الاستخدام وبصمة الجهاز
         async function activateCodeInSheet(code) {
             const msg = document.getElementById('lock-msg');
+            
+            // تجهيز البيانات للتحديث
             const updateData = {
                 data: [
                     {
