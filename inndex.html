@@ -17,6 +17,7 @@
             --card-grad: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
             --paper-color: #fdfbf7;
             --text-dark: #1e293b;
+            --video-accent: #ff0033; /* أحمر يوتيوب */
         }
 
         body {
@@ -60,6 +61,15 @@
         .exam-card .card-icon-wrap svg { fill: var(--success); }
         .exam-card h3 { color: var(--success); }
 
+        /* تنسيقات بطاقة الفيديو (جديدة) */
+        .card-video {
+            background: linear-gradient(135deg, #2a0a0a 0%, #1e144a 100%);
+            border-color: rgba(255, 0, 51, 0.4);
+            box-shadow: 0 4px 20px rgba(255,0,0,0.15);
+        }
+        .card-video .card-icon-wrap svg { fill: var(--video-accent); filter: drop-shadow(0 0 10px rgba(255, 0, 51, 0.4)); }
+        .card-video h3 { color: #ff80ab; }
+
         /* --- الشبكة الجديدة للتمارين --- */
         .exercises-grid {
             display: grid;
@@ -100,7 +110,7 @@
         }
         .reset-btn:hover { background: var(--danger); color: white; }
 
-        /* --- شاشة الحماية (تم تحسين التصميم) --- */
+        /* --- شاشة الحماية --- */
         #protection-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000000; 
@@ -223,6 +233,56 @@
         .score-display { font-size: 3rem; font-weight: 900; color: var(--gold); font-family: 'Cairo'; }
         .remark-text { font-size: 1.5rem; font-family: 'Amiri'; margin-bottom: 20px; font-weight: bold; }
 
+        /* تنسيقات شاشة الفيديوهات */
+        .videos-view {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--deep-blue); z-index: 3000;
+            display: none; flex-direction: column; padding: 20px;
+            overflow-y: auto;
+        }
+        .video-list-container {
+            width: 100%; max-width: 600px; margin: 0 auto;
+        }
+        .video-link-card {
+            background: rgba(255, 0, 0, 0.05);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .video-link-card:hover {
+            background: rgba(255, 0, 0, 0.1);
+            border-color: var(--video-accent);
+            transform: translateY(-2px);
+        }
+        .video-icon {
+            font-size: 2.5rem;
+            margin-left: 20px;
+            background: rgba(255,0,0,0.1);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        .video-text h4 {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            font-family: 'Cairo';
+        }
+        .video-text p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+        }
+
     </style>
 </head>
 <body>
@@ -239,7 +299,7 @@
             <h2 class="login-title">ادخل كود التفعيل</h2>
             <p class="login-subtitle">التربية الإسلامية الرابعة متوسط</p>
             
-            <input type="text" id="access-code" class="code-input" placeholder="الكود هنا" maxlength="15">
+            <input type="text" id="access-code" class="code-input" placeholder="الكود هنا" maxlength="15" autocomplete="off">
             <button id="btn-unlock" class="btn-verify" onclick="verifyCode()">تحقق ودخول</button>
             
             <div id="lock-msg" class="status-msg"></div>
@@ -307,6 +367,14 @@
             </div>
         </div>
 
+        <!-- البطاقة الكبيرة: الفيديوهات (جديدة) -->
+        <div class="card card-video" onclick="showVideos()">
+            <div class="card-icon-wrap">
+                <svg viewBox="0 0 24 24"><path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+            </div>
+            <h3>المراجعة النهائية بالفيديو</h3>
+        </div>
+
         <!-- البطاقة الكبيرة: الامتحان النموذجي -->
         <div class="card exam-card" onclick="generateMockExam()">
             <div class="card-icon-wrap">
@@ -334,7 +402,29 @@
         </div>
     </div>
 
-    <!-- 2. مودال الكتاب المدرسي -->
+    <!-- 2. شاشة الفيديوهات (جديدة) -->
+    <div class="videos-view" id="videos-view">
+        <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="color: var(--video-accent); font-family: 'Cairo';">المراجعة الشاملة</h2>
+            <button class="btn-back" onclick="closeVideos()">✕ رجوع</button>
+        </div>
+        <div class="video-list-container">
+            <p style="text-align:center; margin-bottom:20px; opacity:0.8;">
+                شاهد فيديوهات المراجعة لتحقيق النجاح في الامتحان:
+            </p>
+
+            <a href="https://www.youtube.com/@youcefmadene/playlists" target="_blank" class="video-link-card">
+                <div class="video-icon">▶</div>
+                <div class="video-text">
+                    <h4>المراجعة النهائية - التربية الإسلامية</h4>
+                    <p>ملخص شامل للمنهاج مع حلول أسئلة نموذجية</p>
+                </div>
+            </a>
+            <!-- يمكن إضافة المزيد من الفيديوهات هنا -->
+        </div>
+    </div>
+
+    <!-- 3. مودال الكتاب المدرسي -->
     <div id="book-modal" class="modal">
         <div class="book-viewer">
             <button class="btn-back" onclick="closeBook()">⬅ إغلاق الكتاب</button>
@@ -381,7 +471,7 @@
         </div>
     </div>
 
-    <!-- 3. مودال الامتحان النموذجي -->
+    <!-- 4. مودال الامتحان النموذجي -->
     <div id="exam-modal" class="modal">
         <div class="exam-paper">
             <div class="exam-header">
@@ -402,152 +492,240 @@
 
     <script>
         // ==========================================
-        // 1. منطق الحماية والتفعيل (تم تحديث الرابط والمنطق)
+        // 1. منطق الحماية والتفعيل (من HUNTER MATH)
         // ==========================================
         
-        // الرابط الجديد المحدد
-        const API_BASE_URL = 'https://sheetdb.io/api/v1/coepewa2mafyv'; 
+        // توليد بصمة الجهاز (Device Fingerprint)
+        function getDeviceFingerprint() {
+            const info = navigator.userAgent + screen.width + screen.height + navigator.language;
+            return btoa(info).slice(0, 30);
+        }
+
+        // إعدادات النظام
+        const API_URL = "https://sheetdb.io/api/v1/coepewa2mafyv";
+        const LOCAL_STORAGE_KEY = "bem_activated_codes";
+        const ADMIN_CODES = ["ADMIN-001", "ADMIN-002"]; 
+
+        const cleanString = (str) => str ? str.replace(/\s+/g, '').trim() : '';
+
+        // تهيئة النظام عند تحميل الصفحة
+        window.addEventListener('DOMContentLoaded', () => {
+            
+            // =========================================
+            // وضع التجربة: هذا السطر يمسح التفعيل في كل مرة لتظهر الشاشة
+            // عند الانتهاء من التجربة، قم بحذف هذا السطر فقط
+            // =========================================
+            // localStorage.removeItem(LOCAL_STORAGE_KEY);
+
+            const screen = document.getElementById('protection-screen');
+
+            // التحقق من وجود تفعيل محلي سابق
+            const isActivated = localStorage.getItem(LOCAL_STORAGE_KEY);
+            if (isActivated) {
+                if(screen) screen.style.display = 'none';
+            } else {
+                if(screen) screen.style.display = 'flex';
+            }
+
+            const btn = document.getElementById('btn-unlock');
+            if (btn) btn.onclick = verifyCode;
+        });
+
+        // منطق التحقق والتفعيل
+        function verifyCode() {
+            const codeInput = document.getElementById('access-code');
+            const msgEl = document.getElementById('lock-msg');
+            const btn = document.getElementById('btn-unlock');
+
+            if (!codeInput || !msgEl || !btn) {
+                return;
+            }
+
+            const rawCode = codeInput.value;
+            const inputCode = cleanString(rawCode); 
+
+            if (!inputCode) {
+                showFeedback(msgEl, "الرجاء إدخال الكود", "var(--danger)");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "جاري التحقق...";
+            showFeedback(msgEl, "جاري الاتصال بالسيرفر...", "#fff");
+
+            // 1. التحقق من أكواد المسؤول (Admin)
+            if (ADMIN_CODES.includes(inputCode)) {
+                saveToLocal(inputCode);
+                finishActivation(btn);
+                grantAccess();
+                return;
+            }
+
+            // 2. التحقق من الأكواد العادية
+            checkCodeOnServer(inputCode, btn, msgEl);
+        }
+
+        // دالة البحث
+        function checkCodeOnServer(code, btn, msgEl) {
+            const url = `${API_URL}/search?code=${encodeURIComponent(code)}`;
+            
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) throw new Error("NetworkError");
+                    return response.json();
+                })
+                .then(data => {
+                    if (!data || data.length === 0) throw new Error("NotFound");
+
+                    const entry = data[0];
+                    const currentDeviceID = getDeviceFingerprint();
+
+                    // المقارنة المرنة للأكواد
+                    const normalize = (str) => str ? str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() : '';
+                    if (normalize(entry.code) !== normalize(code)) {
+                        throw new Error("NotFound");
+                    }
+
+                    // --- منطق التحقق ---
+                    
+                    // الحالة 1: الكود جديد
+                    if (!entry.status || entry.status === "" || entry.status === null) {
+                        console.log("الكود جديد، جاري القفل على الجهاز...");
+                        lockCodeToDevice(code, currentDeviceID, btn, msgEl);
+                    } 
+                    // الحالة 2: الكود مستخدم
+                    else {
+                        if (entry.device_id === currentDeviceID) {
+                            console.log("الكود مفعل على هذا الجهاز.");
+                            saveToLocal(code);
+                            finishActivation(btn);
+                            grantAccess();
+                        } else {
+                            console.error("الكود مستخدم على جهاز آخر.");
+                            throw new Error("DifferentDevice");
+                        }
+                    }
+                })
+                .catch(error => {
+                    resetButton(btn);
+                    console.error("خطأ في التحقق:", error);
+                    
+                    if (error.message === "NotFound") {
+                        showFeedback(msgEl, "❌ الكود غير موجود! تأكد من الكتابة.", "var(--danger)");
+                    } else if (error.message === "DifferentDevice") {
+                        showFeedback(msgEl, "❌ هذا الكود مفعل مسبقاً على جهاز آخر!", "var(--danger)");
+                    } else if (error.message === "NetworkError") {
+                        showFeedback(msgEl, "⚠️ فشل الاتصال بالإنترنت.", "var(--danger)");
+                    } else {
+                        showFeedback(msgEl, "⚠️ خطأ غير معروف.", "var(--danger)");
+                    }
+                });
+        }
+
+        // دالة القفل
+        function lockCodeToDevice(code, deviceID, btn, msgEl) {
+            // ملاحظة: تأكد من إعداد عمود 'code' كمفتاح أساسي في SheetDB
+            const url = `${API_URL}/code/${code}`; 
+            
+            console.log(`جاري تحديث الكود: ${url}`);
+
+            fetch(url, {
+                method: 'PATCH',
+                headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    data: { 
+                        "status": "active", 
+                        "device_id": deviceID 
+                    } 
+                })
+            })
+            .then(res => {
+                if (res.ok) {
+                    saveToLocal(code);
+                    finishActivation(btn);
+                    grantAccess();
+                } else {
+                    throw new Error(`ServerResponse: ${res.status}`);
+                }
+            })
+            .catch(err => {
+                resetButton(btn);
+                let errorMessage = "⚠️ فشل الاتصال أثناء القفل.";
+                if (err.message.includes("404")) errorMessage = "❌ خطأ: تأكد من إعدادات SheetDB (Primary Key = code).";
+                else if (err.message.includes("403")) errorMessage = "❌ خطأ صلاحيات!";
+                
+                showFeedback(msgEl, errorMessage, "var(--danger)");
+                console.error("خطأ في القفل:", err);
+            });
+        }
+
+        function showFeedback(el, text, color) {
+            if(el) {
+                el.innerText = text;
+                el.style.color = color;
+            }
+        }
+
+        function resetButton(btn) {
+            btn.disabled = false;
+            btn.innerText = "تحقق ودخول";
+        }
+
+        function finishActivation(btn) {
+            const msgEl = document.getElementById('lock-msg');
+            showFeedback(msgEl, "✅ تم التفعيل بنجاح", "var(--success)");
+            btn.disabled = false;
+            btn.innerText = "تم الدخول";
+        }
+
+        function saveToLocal(code) {
+            // حفظ الكود في التاريخ
+            const history = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || "[]");
+            if (!history.includes(code)) {
+                history.push(code);
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(history));
+            }
+            // حفظ الحالة العامة للكشف السريع
+            localStorage.setItem('bem_activated', 'true');
+        }
+
+        function grantAccess() {
+            setTimeout(() => {
+                const screen = document.getElementById('protection-screen');
+                if (screen) {
+                    screen.style.opacity = '0';
+                    setTimeout(() => { screen.style.display = 'none'; },500);
+                }
+            }, 1000);
+        }
 
         function clearActivation() {
             if(confirm('هل أنت متأكد من مسح التفعيل؟ سيتم طلب الكود مرة أخرى.')) {
                 localStorage.removeItem('bem_activated');
-                localStorage.removeItem('bem_activation_code');
-                localStorage.removeItem('device_fp');
+                localStorage.removeItem(LOCAL_STORAGE_KEY);
                 location.reload();
             }
         }
+        // ==========================================
 
-        // توليد معرف فريد للجهاز (بصمة الجهاز)
-        function getDeviceFingerprint() {
-            let fp = localStorage.getItem('device_fp');
-            if (!fp) {
-                fp = 'fp_' + Math.random().toString(36).substr(2, 9) + Date.now();
-                localStorage.setItem('device_fp', fp);
-            }
-            return fp;
+        // ==========================================
+        // 2. دوال التحكم في الواجهة (Videos, etc.)
+        // ==========================================
+        function showVideos() {
+            document.querySelector('.container').style.display = 'none';
+            document.querySelector('.ticker').style.display = 'none';
+            document.getElementById('videos-view').style.display = 'flex';
         }
 
-        // عند تحميل الصفحة، نتأكد هل المستخدم مفعل مسبقاً؟
-        window.onload = () => {
-            getDeviceFingerprint(); 
-            const isActivated = localStorage.getItem('bem_activated') === 'true';
-            if(isActivated) {
-                document.getElementById('protection-screen').classList.add('hidden');
-            }
-        };
-
-        // دالة التحقق من الكود (المنطق الكامل)
-        async function verifyCode() {
-            const input = document.getElementById('access-code').value.trim();
-            const btn = document.getElementById('btn-unlock');
-            const msg = document.getElementById('lock-msg');
-            
-            if(!input) { 
-                msg.textContent = "يرجى إدخال الكود"; 
-                msg.style.color = "var(--danger)"; 
-                return; 
-            }
-            
-            btn.disabled = true; 
-            btn.textContent = "جاري التحقق...";
-            msg.style.color = "var(--gold)";
-            msg.textContent = "جاري الاتصال بالسيرفر...";
-
-            try {
-                // 1. البحث عن الكود في الشيت
-                const response = await fetch(`${API_BASE_URL}/search?code=${input}`);
-                if (!response.ok) throw new Error("خطأ في الاتصال بالسيرفر");
-                
-                const data = await response.json();
-
-                // إذا لم يتم العثور على الكود
-                if (data.length === 0) {
-                    throw new Error("الكود غير صحيح أو غير موجود");
-                }
-
-                const row = data[0];
-
-                // التحقق: هل الكود مستخدم مسبقاً؟
-                if (row.status && row.status.trim() !== "") {
-                    // إذا كان مستخدماً، هل هو على نفس الجهاز؟
-                    if (row.device_id && row.device_id !== getDeviceFingerprint()) {
-                        throw new Error("تم استخدام هذا الكود على جهاز آخر");
-                    }
-                    // إذا كان نفس الجهاز، مرحباً بك
-                    msg.style.color = "var(--success)";
-                    msg.textContent = "مرحباً بعودتك";
-                    activateUser();
-                } else {
-                    // الكود جديد وصالح -> قم بتفعيله وكتابة البيانات على الشيت
-                    await activateCodeInSheet(input);
-                }
-
-            } catch (error) {
-                console.error(error);
-                msg.style.color = "var(--danger)";
-                msg.textContent = error.message || "حدث خطأ غير متوقع";
-                btn.disabled = false;
-                btn.textContent = "تحقق ودخول";
-            }
-        }
-
-        // دالة تحديث الشيت بحالة الاستخدام وبصمة الجهاز
-        async function activateCodeInSheet(code) {
-            const msg = document.getElementById('lock-msg');
-            
-            // تجهيز البيانات للتحديث
-            const updateData = {
-                data: [
-                    {
-                        status: 'used',
-                        device_id: getDeviceFingerprint()
-                    }
-                ]
-            };
-
-            try {
-                // تحديث الشيت باستخدام طلب PATCH
-                const updateResponse = await fetch(`${API_BASE_URL}/update?code=${code}`, {
-                    method: 'PATCH', 
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(updateData)
-                });
-
-                if (!updateResponse.ok) {
-                    throw new Error("فشل في حجز الكود، يرجى المحاولة");
-                }
-
-                msg.style.color = "var(--success)";
-                msg.textContent = "تم التفعيل والحجز بنجاح!";
-                activateUser();
-
-            } catch (error) {
-                // في حالة فشل الاتصال، لن نفتح التطبيق لحماية الحقوق
-                msg.style.color = "var(--danger)";
-                msg.textContent = "فشل الاتصال بقاعدة البيانات. تأكد من الإنترنت.";
-                const btn = document.getElementById('btn-unlock');
-                btn.disabled = false;
-                btn.textContent = "تحقق ودخول";
-            }
-        }
-
-        // تفعيل المستخدم محلياً وإظهار التطبيق
-        function activateUser() {
-            localStorage.setItem('bem_activated', 'true');
-            setTimeout(() => {
-                document.getElementById('protection-screen').classList.add('hidden');
-                const btn = document.getElementById('btn-unlock');
-                btn.disabled = false; 
-                btn.textContent = "تحقق ودخول";
-            }, 1000);
+        function closeVideos() {
+            document.querySelector('.container').style.display = 'block';
+            document.querySelector('.ticker').style.display = 'block';
+            document.getElementById('videos-view').style.display = 'none';
         }
         // ==========================================
 
         // ==========================================
-        // 2. قاعدة البيانات (الأسئلة والدروس)
+        // 3. قاعدة البيانات (الأسئلة والدروس)
         // ==========================================
         const MASTER_DB = {
             quran: [
